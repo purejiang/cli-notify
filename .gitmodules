@@ -1,9 +1,9 @@
 [submodule "android"]
 	path = android
-	url = https://github.com/cyanrain/cli-notify-android.git
+	url = https://github.com/purejiang/cli-notify-android.git
 [submodule "cloud-relay"]
 	path = cloud-relay
-	url = https://github.com/cyanrain/cli-notify-relay.git
+	url = https://github.com/purejiang/cli-notify-relay.git
 [submodule "cli-notify-plugin"]
 	path = cli-notify-plugin
-	url = https://github.com/cyanrain/cli-notify-plugin.git
+	url = https://github.com/purejiang/cli-notify-plugin.git
