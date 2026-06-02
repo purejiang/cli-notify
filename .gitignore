@@ -1,0 +1,4 @@
+# Each sub-project has its own .gitignore
+# This file is for overall repo ignores
+.DS_Store
+*.log
