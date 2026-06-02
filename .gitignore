@@ -1,4 +1,7 @@
-# Each sub-project has its own .gitignore
-# This file is for overall repo ignores
+# System
 .DS_Store
 *.log
+
+# Claude Code internal state (not project code)
+.claude/
+.superpowers/
