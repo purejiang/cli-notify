@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cli-notify.dev/protocol/v1",
+  "title": "CLI-Notify Protocol v1 (Aligned)",
+  "description": "Message bus protocol for CLI-Notify: Claude Code Desktop ↔ Cloud Relay ↔ Android App. This is the SINGLE SOURCE OF TRUTH — all components generate their types from this schema.",
+  "type": "object",
+  "required": ["type", "id", "msgType", "sessionId", "from", "timestamp", "encrypted", "data"],
+  "properties": {
+    "type": {
+      "description": "Event type discriminator",
+      "$ref": "#/$defs/EventType"
+    },
+    "id": {
+      "description": "Unique message identifier (UUID v4)",
+      "type": "string",
+      "format": "uuid"
+    },
+    "msgType": {
+      "description": "Message bus classification",
+      "$ref": "#/$defs/MsgType"
+    },
+    "correlationId": {
+      "description": "Links request→response. Required for request/response, null for events.",
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "sessionId": {
+      "description": "Claude Code session identifier",
+      "type": "string"
+    },
+    "from": {
+      "description": "Message origin",
+      "$ref": "#/$defs/Peer"
+    },
+    "timestamp": {
+      "description": "Unix epoch milliseconds",
+      "type": "integer",
+      "minimum": 0
+    },
+    "encrypted": {
+      "description": "Whether data field is E2EE encrypted",
+      "type": "boolean"
+    },
+    "data": {
+      "description": "Message payload. If encrypted=true, this is an EncryptedPayload. Otherwise, the type-specific data object.",
+      "type": "object"
+    }
+  },
+
+  "$defs": {
+    "MsgType": {
+      "type": "string",
+      "enum": ["request", "response", "event"],
+      "description": "request: expects response, response: answers request, event: fire-and-forget"
+    },
+
+    "Peer": {
+      "type": "string",
+      "enum": ["desktop", "mobile", "server"],
+      "description": "Message origin actor"
+    },
+
+    "EventType": {
+      "type": "string",
+      "enum": [
+        "session.start",
+        "session.end",
+        "message.user",
+        "message.assistant",
+        "tool.request",
+        "tool.result",
+        "tool.permission_request",
+        "notification",
+        "sync",
+        "key.exchange",
+        "set_preferences",
+        "get_preferences",
+        "preferences",
+        "auth_success",
+        "error"
+      ]
+    },
+
+    "ErrorCode": {
+      "type": "string",
+      "enum": [
+        "INVALID_ENVELOPE",
+        "UNKNOWN_TYPE",
+        "AUTH_FAILED",
+        "ROOM_NOT_FOUND",
+        "REQUEST_TIMEOUT",
+        "RATE_LIMITED",
+        "INTERNAL"
+      ]
+    },
+
+    "EncryptedPayload": {
+      "description": "E2EE encrypted data field (AES-256-GCM via ECDH P-256 + HKDF-SHA256 with info string 'cli-notify-v1')",
+      "type": "object",
+      "required": ["ephemeralKey", "iv", "ciphertext"],
+      "properties": {
+        "ephemeralKey": {
+          "description": "Base64-encoded ephemeral ECDH P-256 public key (uncompressed point, 65 bytes)",
+          "type": "string"
+        },
+        "iv": {
+          "description": "Base64-encoded 12-byte AES-GCM initialization vector",
+          "type": "string"
+        },
+        "ciphertext": {
+          "description": "Base64-encoded AES-256-GCM ciphertext (includes 16-byte auth tag appended)",
+          "type": "string"
+        }
+      }
+    },
+
+    "KeyExchangeRequest": {
+      "type": "object",
+      "required": ["publicKey"],
+      "properties": {
+        "publicKey": {
+          "description": "Base64-encoded ECDH P-256 public key (uncompressed point, 65 bytes)",
+          "type": "string"
+        },
+        "algorithm": {
+          "description": "Optional algorithm identifier for validation",
+          "type": "string",
+          "const": "ECDH-P256-AES256-GCM"
+        }
+      }
+    },
+
+    "KeyExchangeResponse": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ok", "error"] },
+        "fingerprint": {
+          "description": "SHA-256 hex fingerprint of the registered public key",
+          "type": "string"
+        },
+        "error": { "type": "string" }
+      }
+    },
+
+    "ErrorResponse": {
+      "description": "Standard error response format — flat, not nested",
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "$ref": "#/$defs/ErrorCode" },
+        "message": { "type": "string" },
+        "detail": { "type": "object" }
+      }
+    }
+  }
+}
