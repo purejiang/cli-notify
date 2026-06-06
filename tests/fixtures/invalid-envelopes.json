@@ -1,0 +1,111 @@
+{
+  "description": "Invalid Envelope examples for negative-testing the JSON Schema validator.",
+  "envelopes": {
+    "missing_type": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "missing_id": {
+      "type": "session.start",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "wrong_type_enum": {
+      "type": "invalid.event.type",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "wrong_msgType": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "unknown_msg_type",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "wrong_from_enum": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "browser",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "missing_sessionId": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "missing_timestamp": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "data_not_object": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": "not_an_object_this_is_a_string"
+    },
+    "negative_timestamp": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": -1,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "encrypted_not_boolean": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": "yes",
+      "data": { "cwd": "/home/user/project" }
+    }
+  }
+}

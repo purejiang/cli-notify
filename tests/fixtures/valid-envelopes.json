@@ -1,0 +1,241 @@
+{
+  "description": "Each entry is a valid Envelope covering every EventType in protocol/schema.json. Used by schema-validation tests.",
+  "envelopes": {
+    "session.start": {
+      "type": "session.start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000000000,
+      "encrypted": false,
+      "data": { "cwd": "/home/user/project" }
+    },
+    "session.end": {
+      "type": "session.end",
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000001000,
+      "encrypted": false,
+      "data": { "reason": "user closed terminal" }
+    },
+    "message.user": {
+      "type": "message.user",
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000002000,
+      "encrypted": false,
+      "data": { "content": "请帮我重构 auth.ts" }
+    },
+    "message.assistant": {
+      "type": "message.assistant",
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000003000,
+      "encrypted": false,
+      "data": {
+        "content": "好的，我已经完成重构。",
+        "model": "claude-sonnet-4-6",
+        "tokens": { "input": 150, "output": 80 },
+        "stopReason": "end_turn"
+      }
+    },
+    "tool.request": {
+      "type": "tool.request",
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440005",
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000004000,
+      "encrypted": false,
+      "data": {
+        "toolName": "Edit",
+        "params": { "file_path": "/path/to/file.ts", "old_string": "foo", "new_string": "bar" }
+      }
+    },
+    "tool.result": {
+      "type": "tool.result",
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000005000,
+      "encrypted": false,
+      "data": {
+        "toolName": "Edit",
+        "output": "{\"oldString\":\"foo\",\"newString\":\"bar\"}",
+        "success": true
+      }
+    },
+    "tool.permission_request": {
+      "type": "tool.permission_request",
+      "id": "550e8400-e29b-41d4-a716-446655440007",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000006000,
+      "encrypted": false,
+      "data": {
+        "toolName": "Bash",
+        "message": "请前往桌面端处理权限请求"
+      }
+    },
+    "notification": {
+      "type": "notification",
+      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000007000,
+      "encrypted": false,
+      "data": {
+        "kind": "idle_prompt",
+        "message": null,
+        "cwd": "/home/user/project"
+      }
+    },
+    "sync": {
+      "type": "sync",
+      "id": "550e8400-e29b-41d4-a716-446655440009",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440009",
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718000008000,
+      "encrypted": false,
+      "data": {}
+    },
+    "key.exchange": {
+      "type": "key.exchange",
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440010",
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718000009000,
+      "encrypted": false,
+      "data": {
+        "publicKey": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "algorithm": "ECDH-P256-AES256-GCM"
+      }
+    },
+    "set_preferences": {
+      "type": "set_preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440011",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440011",
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718000010000,
+      "encrypted": false,
+      "data": {
+        "approvalTimeoutMs": 8000,
+        "fallbackAction": "ask"
+      }
+    },
+    "get_preferences": {
+      "type": "get_preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440012",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440012",
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718000011000,
+      "encrypted": false,
+      "data": {}
+    },
+    "preferences": {
+      "type": "preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440013",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "",
+      "from": "server",
+      "timestamp": 1718000012000,
+      "encrypted": false,
+      "data": {
+        "approvalTimeoutMs": 8000,
+        "fallbackAction": "ask",
+        "hasDesktop": true
+      }
+    },
+    "auth_success": {
+      "type": "auth_success",
+      "id": "550e8400-e29b-41d4-a716-446655440014",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "",
+      "from": "server",
+      "timestamp": 1718000013000,
+      "encrypted": false,
+      "data": { "user_id": "paired-user" }
+    },
+    "error": {
+      "type": "error",
+      "id": "550e8400-e29b-41d4-a716-446655440015",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "server",
+      "timestamp": 1718000014000,
+      "encrypted": false,
+      "data": {
+        "code": "AUTH_FAILED",
+        "message": "Invalid or expired token",
+        "detail": {}
+      }
+    },
+    "encrypted_envelope": {
+      "type": "message.user",
+      "id": "550e8400-e29b-41d4-a716-446655440016",
+      "msgType": "event",
+      "correlationId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718000015000,
+      "encrypted": true,
+      "data": {
+        "ephemeralKey": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "iv": "AAAAAAAAAAAAAAAA",
+        "ciphertext": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      }
+    },
+    "response_envelope": {
+      "type": "sync",
+      "id": "550e8400-e29b-41d4-a716-446655440017",
+      "msgType": "response",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440009",
+      "sessionId": "",
+      "from": "server",
+      "timestamp": 1718000016000,
+      "encrypted": false,
+      "data": {
+        "sessions": [
+          {
+            "id": "sess-abc123",
+            "cwd": "/home/user/project",
+            "status": "active",
+            "startedAt": 1718000000000,
+            "endedAt": null,
+            "messageCount": 0,
+            "pendingApprovalCount": 0
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLI-Notify — Design Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #6e7681;
+  --primary: #58a6ff;
+  --primary-dim: #1f6feb33;
+  --green: #3fb950;
+  --green-dim: #3fb95022;
+  --orange: #d2991d;
+  --orange-dim: #d2991d22;
+  --red: #f85149;
+  --red-dim: #f8514922;
+  --purple: #a371f7;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', -apple-system, sans-serif;
+  background: #010409;
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.app {
+  width: 390px;
+  height: 844px;
+  background: var(--bg);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 4px #1c2333, 0 24px 80px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+/* ── Status Bar ── */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+
+.status-left { display: flex; gap: 4px; align-items: center; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.status-right { display: flex; gap: 12px; align-items: center; }
+
+/* ── Connection bar ── */
+.conn-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 20px;
+  font-size: 11px;
+  color: var(--green);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* ── Header ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 16px;
+  flex-shrink: 0;
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.header-actions { display: flex; gap: 4px; }
+
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all .15s;
+}
+
+.icon-btn:hover { background: var(--surface2); color: var(--text); }
+
+/* ── Content area ── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 8px;
+}
+
+/* ── Chat sub-header ── */
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.back-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-header-info { flex: 1; min-width: 0; }
+
+.chat-header-title {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-header-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 1px;
+}
+
+.chat-sub-sep { color: var(--text3); opacity: 0.4; }
+
+/* ── Chat Messages ── */
+.chat-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 4px 0 8px;
+}
+
+.info-card-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.info-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.info-chip svg { opacity: 0.6; }
+
+.system-chip {
+  align-self: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  margin: 4px 0;
+}
+
+/* Message bubble */
+.msg-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.msg-bubble.user {
+  align-self: flex-end;
+  background: var(--primary-dim);
+  border: 1px solid #1f6feb44;
+  color: #c8e1ff;
+  border-bottom-right-radius: 4px;
+}
+
+.msg-bubble.assistant {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.msg-time {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+}
+
+.msg-bubble.assistant .msg-time { text-align: left; }
+
+/* Tool card */
+.tool-card {
+  align-self: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+.tool-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--orange);
+}
+
+.tool-card-body {
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.tool-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-approve, .btn-deny {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.btn-approve {
+  background: var(--green-dim);
+  border-color: #3fb95044;
+  color: var(--green);
+}
+
+.btn-approve:hover { background: #3fb95033; }
+
+.btn-deny {
+  background: var(--red-dim);
+  border-color: #f8514944;
+  color: var(--red);
+}
+
+.btn-deny:hover { background: #f8514933; }
+
+.btn-done {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 11px;
+  cursor: default;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Reply bar */
+.reply-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.reply-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'Noto Sans SC', sans-serif;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.reply-input:focus { border-color: var(--primary); }
+.reply-input::placeholder { color: var(--text3); }
+
+.send-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+
+.send-btn:hover { filter: brightness(1.2); }
+
+/* ── Session List Item ── */
+.session-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.session-item:hover { background: var(--surface); }
+.session-item:active { background: var(--surface2); }
+
+.session-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.session-info { flex: 1; min-width: 0; }
+
+.session-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+.session-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.session-meta span { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+.meta-dot { color: var(--text3); }
+
+.session-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.session-time {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.session-chevron { color: var(--text3); font-size: 14px; opacity: 0.5; }
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin-left: 76px;
+  opacity: 0.4;
+}
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  padding-bottom: 8px;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 2px;
+  cursor: pointer;
+  color: var(--text3);
+  transition: color .15s;
+  border: none;
+  background: transparent;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.nav-item.active { color: var(--text); }
+
+.nav-item svg { width: 22px; height: 22px; }
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.nav-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 10px;
+  background: var(--primary-dim);
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
+}
+
+/* ── Settings page rows ── */
+.settings-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 12px 4px;
+}
+
+.settings-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.settings-row {
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-row + .settings-row { border-top: 1px solid var(--border); }
+
+.settings-row-label {
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.settings-row-value {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.settings-row-value.mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+/* Toggle switch */
+.toggle {
+  width: 44px; height: 26px;
+  border-radius: 13px;
+  background: var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+
+.toggle.on { background: var(--green); }
+
+.toggle::after {
+  content: '';
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left .2s;
+}
+
+.toggle.on::after { left: 20px; }
+
+/* ── Page visibility ── */
+.sub-page {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 56px;
+  background: var(--bg);
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+}
+
+.sub-page.visible { display: flex; }
+
+.main-page { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.main-page.hidden { display: none; }
+
+/* ── Page Switcher (floating) ── */
+.page-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+
+.ps-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .15s;
+}
+
+.ps-btn:hover { background: var(--surface2); color: var(--text); }
+.ps-btn.current { background: var(--primary-dim); color: var(--primary); border-color: #1f6feb44; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page-switcher">
+  <button class="ps-btn current" onclick="showMain()">会话列表</button>
+  <button class="ps-btn" onclick="showChat()">会话详情</button>
+  <button class="ps-btn" onclick="showSettings()">设置</button>
+</div>
+
+<div class="app" id="app">
+
+  <!-- ═══════════ MAIN PAGE: 会话列表 ═══════════ -->
+  <div class="main-page visible" id="main-page">
+
+    <div class="status-bar">
+      <div class="status-left"><span class="status-dot"></span> CLI-Notify</div>
+      <div class="status-right">WiFi ▮▮▮ 87%</div>
+    </div>
+
+    <div class="conn-bar">
+      <span class="conn-dot"></span> 已连接 · ws://192.168.9.184:8765
+    </div>
+
+    <div class="header">
+      <h1>会话</h1>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="showSettings()">⚙</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Session 1 -->
+      <div class="session-item" onclick="showChat()">
+        <div class="session-avatar">你</div>
+        <div class="session-info">
+          <div class="session-title">你看下当前ip</div>
+          <div class="session-meta">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> cli-notify</span>
+            <span class="meta-dot">·</span>
+            <span>#abc123</span>
+          </div>
+          <div class="session-meta" style="margin-top:2px">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2025-06-03 14:23</span>
+          </div>
+        </div>
+        <div class="session-right">
+          <span class="session-time">2分钟前</span>
+          <span class="session-chevron">›</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Session 2 -->
+      <div class="session-item" onclick="showChat()">
+        <div class="session-avatar">重</div>
+        <div class="session-info">
+          <div class="session-title">重新设计app端的页面</div>
+          <div class="session-meta">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> cli-notify</span>
+            <span class="meta-dot">·</span>
+            <span>#7f3a2c</span>
+          </div>
+          <div class="session-meta" style="margin-top:2px">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2025-06-03 15:01</span>
+          </div>
+        </div>
+        <div class="session-right">
+          <span class="session-time">刚刚</span>
+          <span class="session-chevron">›</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Session 3 -->
+      <div class="session-item" onclick="showChat()">
+        <div class="session-avatar">为</div>
+        <div class="session-info">
+          <div class="session-title">为什么会话标题是Untitled</div>
+          <div class="session-meta">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> cli-notify</span>
+            <span class="meta-dot">·</span>
+            <span>#5e8d4f</span>
+          </div>
+          <div class="session-meta" style="margin-top:2px">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2025-06-03 13:45</span>
+          </div>
+        </div>
+        <div class="session-right">
+          <span class="session-time">1小时前</span>
+          <span class="session-chevron">›</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <button class="nav-item active" id="nav-sessions" onclick="showMain()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="nav-label">会话 <span class="nav-badge">3</span></span>
+      </button>
+      <button class="nav-item" id="nav-profile" onclick="showSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="nav-label">我的</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ SUB-PAGE: 会话详情 ═══════════ -->
+  <div class="sub-page" id="sub-chat">
+
+    <div class="chat-header">
+      <button class="back-btn" onclick="showMain()">←</button>
+      <div class="chat-header-info">
+        <div class="chat-header-title">你看下当前ip</div>
+        <div class="chat-header-sub">#abc123</div>
+      </div>
+    </div>
+
+    <div class="chat-content">
+      <div class="info-card">
+        <div class="info-card-row">
+          <div class="info-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            cli-notify
+          </div>
+          <div class="info-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            #abc123def456
+          </div>
+          <div class="info-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            14:23
+          </div>
+          <div class="info-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            F:/cyanrain/AI/vibecoding/cli-notify
+          </div>
+        </div>
+      </div>
+
+      <div class="system-chip">会话开始  14:23</div>
+
+      <div class="msg-bubble user">
+        你看下当前ip
+        <div class="msg-time">14:23</div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div class="tool-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg> Bash</div>
+          <span style="font-size:11px;color:var(--text3);font-family:monospace">等待审批</span>
+        </div>
+        <div class="tool-card-body">curl -s ifconfig.me</div>
+        <div class="tool-card-actions">
+          <button class="btn-approve">同意</button>
+          <button class="btn-deny">拒绝</button>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div class="tool-name" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Bash 结果</div>
+          <span class="btn-done">完成</span>
+        </div>
+        <div class="tool-card-body">183.6.2.221</div>
+      </div>
+
+      <div class="msg-bubble assistant">
+        当前公网 IP 是 183.6.2.221。
+        <div class="msg-time">14:23  ·  Claude Opus 4.7  ·  42 tok</div>
+      </div>
+
+      <div class="system-chip">等待输入  14:23</div>
+    </div>
+
+    <div class="reply-bar">
+      <input class="reply-input" placeholder="输入回复..." />
+      <button class="send-btn">↑</button>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ SUB-PAGE: 设置 ═══════════ -->
+  <div class="sub-page" id="sub-settings">
+
+    <div class="chat-header">
+      <button class="back-btn" onclick="showMain()">←</button>
+      <div class="chat-header-info">
+        <div class="chat-header-title">设置</div>
+      </div>
+    </div>
+
+    <div class="content" style="padding:12px 16px;">
+
+      <div class="settings-section-label" style="color:var(--primary)">连接</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div style="font-size:14px;font-weight:500;">连接状态</div>
+            <div style="font-size:12px;color:var(--green);margin-top:2px;">已连接</div>
+          </div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">服务器地址</div>
+            <div class="settings-row-value mono">ws://192.168.9.184:8765/ws</div>
+          </div>
+          <span style="color:var(--text3);font-size:14px;">›</span>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">认证 Token</div>
+            <div class="settings-row-value mono">k2HMyQUh••••••••</div>
+          </div>
+          <span style="color:var(--text3);font-size:14px;">›</span>
+        </div>
+        <div class="settings-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <div>
+              <div style="font-size:14px;font-weight:500;">扫码连接</div>
+              <div style="font-size:12px;color:var(--text2);">扫描二维码自动配置</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section-label" style="color:var(--purple)">审批</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">审批超时</div>
+            <div class="settings-row-value">8秒</div>
+          </div>
+          <span style="color:var(--text3);font-size:14px;">›</span>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">超时后操作</div>
+            <div class="settings-row-value">桌面询问</div>
+          </div>
+          <span style="color:var(--text3);font-size:14px;">›</span>
+        </div>
+      </div>
+
+      <div class="settings-section-label" style="color:var(--text2)">关于</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:40px;height:40px;border-radius:10px;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;font-size:20px;">⚡</div>
+            <div>
+              <div style="font-size:15px;font-weight:600;">CLI-Notify</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:1px;">Claude Code 远程通知 · v1.0.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function showMain() {
+  document.getElementById('main-page').classList.remove('hidden');
+  document.getElementById('main-page').classList.add('visible');
+  document.getElementById('sub-chat').classList.remove('visible');
+  document.getElementById('sub-settings').classList.remove('visible');
+  document.getElementById('nav-sessions').classList.add('active');
+  document.getElementById('nav-profile').classList.remove('active');
+  updateSwitcher('sessions');
+}
+
+function showChat() {
+  document.getElementById('main-page').classList.add('hidden');
+  document.getElementById('sub-chat').classList.add('visible');
+  document.getElementById('sub-settings').classList.remove('visible');
+  updateSwitcher('chat');
+}
+
+function showSettings() {
+  document.getElementById('main-page').classList.add('hidden');
+  document.getElementById('sub-chat').classList.remove('visible');
+  document.getElementById('sub-settings').classList.add('visible');
+  document.getElementById('nav-sessions').classList.remove('active');
+  document.getElementById('nav-profile').classList.add('active');
+  updateSwitcher('settings');
+}
+
+function updateSwitcher(page) {
+  document.querySelectorAll('.ps-btn').forEach(b => b.classList.remove('current'));
+  const labels = { sessions: '会话列表', chat: '会话详情', settings: '设置' };
+  document.querySelectorAll('.ps-btn').forEach(b => {
+    if (b.textContent === labels[page]) b.classList.add('current');
+  });
+}
+</script>
+
+</body>
+</html>
