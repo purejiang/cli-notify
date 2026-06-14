@@ -2,6 +2,15 @@
 .DS_Store
 *.log
 
+# Dependencies
+node_modules/
+
 # Claude Code internal state (not project code)
 .claude/
 .superpowers/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

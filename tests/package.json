@@ -4,18 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:protocol": "node tests/protocol/schema-validation.test.js",
-    "test:relay": "npx vitest run tests/relay/",
-    "test:plugin": "node tests/plugin/integration.test.js",
-    "test": "npm run test:protocol && npm run test:relay && npm run test:plugin"
+    "test:protocol": "node protocol/schema-validation.test.js",
+    "test:plugin": "python3 plugin/test_relay_forward.py",
+    "test": "npm run test:protocol && npm run test:plugin"
   },
   "devDependencies": {
-    "ajv": "^8.17.0",
-    "vitest": "^2.1.9"
-  },
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "ajv": "^8.17.0"
+  }
 }
