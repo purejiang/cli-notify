@@ -15,7 +15,7 @@ Claude Code Desktop ──HTTP hooks──▶ Cloud Relay (VPS) ──WebSocket�
 | Directory | Description |
 |---|---|
 | [`android/`](https://github.com/purejiang/cli-notify-android) | Android app (Kotlin + Jetpack Compose) |
-| [`cloud-relay/`](https://github.com/purejiang/cli-notify-relay) | Cloud relay server (TypeScript + Express) |
+| [`cloud-relay/`](https://github.com/purejiang/cli-notify-relay) | Cloud relay server (Python + FastAPI) |
 | [`cli-notify-plugin/`](https://github.com/purejiang/cli-notify-plugin) | Claude Code plugin (hooks config only) |
 
 ## Quick Start

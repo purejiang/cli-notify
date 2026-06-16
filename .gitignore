@@ -9,8 +9,14 @@ node_modules/
 .claude/
 .superpowers/
 
+# Code intelligence index (local state, not project code)
+.codegraph/
+
 # Python
 __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Runtime data (SQLite, etc.)
+data/

@@ -70,6 +70,7 @@
         "tool.request",
         "tool.result",
         "tool.permission_request",
+        "tool.permission_response",
         "notification",
         "sync",
         "key.exchange",

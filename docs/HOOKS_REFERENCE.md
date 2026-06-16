@@ -10,16 +10,18 @@ Claude Code 在生命周期节点触发 HTTP hook，POST JSON 到 relay。Relay 
 
 ## Hook 清单
 
-| Hook | 触发时机 | Relay 路径 | 发送的 WebSocket 事件 |
-|------|---------|------------|----------------------|
-| **SessionStart** | 会话创建/恢复 | `/hook/session-start` | `session.start` |
-| **UserPromptSubmit** | 用户提交消息 | `/hook/user-prompt` | `message.user` |
-| **PreToolUse** | 工具调用**前** | `/hook/pre-tool-use` | `tool.request` |
-| **PermissionRequest** | 桌面弹权限窗时 | `/hook/permission-request` | `tool.permission_request` |
-| **PostToolUse** | 工具调用**后** | `/hook/post-tool-use` | `tool.result` |
-| **Stop** | Claude 回复完成 | `/hook/stop` | `message.assistant` + `notification(idle_prompt)` |
-| **SessionEnd** | 会话结束 | `/hook/session-end` | `session.end` |
-| **Notification** | 系统通知 | `/hook/notification` | `notification` |
+| Hook | 触发时机 | Relay 路径 | Envelope type |
+|------|---------|------------|---------------|
+| **SessionStart** | 会话创建/恢复 | `/hook/relay` | `session.start` |
+| **UserPromptSubmit** | 用户提交消息 | `/hook/relay` | `message.user` |
+| **PreToolUse** | 工具调用**前** | `/hook/relay` | `tool.request` |
+| **PermissionRequest** | 桌面弹权限窗时 | `/hook/relay` | `tool.permission_request` |
+| **PostToolUse** | 工具调用**后** | `/hook/relay` | `tool.result` |
+| **Stop** | Claude 回复完成 | `/hook/relay` | `message.assistant` + `notification(idle_prompt)` |
+| **SessionEnd** | 会话结束 | `/hook/relay` | `session.end` |
+| **Notification** | 系统通知 | `/hook/relay` | `notification` |
+
+> 所有 8 个 hook 统一使用 `POST /hook/relay?token=JWT`，通过 envelope 的 `type` 字段区分事件类型。
 
 ---
 
