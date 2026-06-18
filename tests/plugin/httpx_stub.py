@@ -13,6 +13,16 @@ class RequestError(Exception):
     pass
 
 
+class Timeout:
+    """Mock httpx.Timeout."""
+    def __init__(self, timeout=10.0):
+        self.timeout = timeout
+        self.connect = timeout
+        self.read = timeout
+        self.write = timeout
+        self.pool = timeout
+
+
 class Client:
     """Mock httpx.Client that records requests and returns configurable responses."""
 

@@ -1,22 +1,5 @@
-# System
-.DS_Store
-*.log
+# cli-notify data directory (contains JWT tokens, should not be committed)
+.cli-notify/
 
-# Dependencies
-node_modules/
-
-# Claude Code internal state (not project code)
-.claude/
+# superpowers brainstorming mockups
 .superpowers/
-
-# Code intelligence index (local state, not project code)
-.codegraph/
-
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-# Runtime data (SQLite, etc.)
-data/

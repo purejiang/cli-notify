@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cli-notify.dev/protocol/v1",
-  "title": "CLI-Notify Protocol v1 (Aligned)",
-  "description": "Message bus protocol for CLI-Notify: Claude Code Desktop ↔ Cloud Relay ↔ Android App. This is the SINGLE SOURCE OF TRUTH — all components generate their types from this schema.",
+  "$id": "https://cli-notify.dev/protocol/v2",
+  "title": "CLI-Notify Protocol v2",
+  "description": "Message bus protocol v2. 30 Claude Code Hooks mapped to EventTypes + 7 system types. This is the SINGLE SOURCE OF TRUTH — all components generate their types from this schema.",
   "type": "object",
   "required": ["type", "id", "msgType", "sessionId", "from", "timestamp", "encrypted", "data"],
   "properties": {
     "type": {
-      "description": "Event type discriminator",
+      "description": "Event type discriminator — snake_case Hook name or system type",
       "$ref": "#/$defs/EventType"
     },
     "id": {
@@ -16,67 +16,106 @@
       "format": "uuid"
     },
     "msgType": {
-      "description": "Message bus classification",
+      "description": "Message bus classification: event (fire-and-forget), request (expects response), response (answers a request)",
       "$ref": "#/$defs/MsgType"
     },
     "correlationId": {
-      "description": "Links request→response. Required for request/response, null for events.",
+      "description": "Links request to response. Required for msgType=request/response, null for events.",
       "type": ["string", "null"],
       "format": "uuid"
+    },
+    "groupId": {
+      "description": "Groups related messages within a turn or agent batch. Set by plugin on UserPromptSubmit, cleared on Stop.",
+      "type": ["string", "null"]
     },
     "sessionId": {
       "description": "Claude Code session identifier",
       "type": "string"
     },
     "from": {
-      "description": "Message origin",
+      "description": "Message origin: desktop, mobile, or server (relay)",
       "$ref": "#/$defs/Peer"
     },
     "timestamp": {
-      "description": "Unix epoch milliseconds",
+      "description": "Unix epoch milliseconds (monotonic, >= 0)",
       "type": "integer",
       "minimum": 0
     },
     "encrypted": {
-      "description": "Whether data field is E2EE encrypted",
+      "description": "Whether the data field is E2EE encrypted. When true, data must be an EncryptedPayload.",
       "type": "boolean"
     },
     "data": {
-      "description": "Message payload. If encrypted=true, this is an EncryptedPayload. Otherwise, the type-specific data object.",
+      "description": "Message payload. When encrypted=false, this is an EnvelopeData object. When encrypted=true, this is an EncryptedPayload.",
       "type": "object"
+    },
+    "_decision": {
+      "description": "Relay-layer metadata (underscore prefix = not part of application protocol). Used for mobile-to-relay approval responses. Never encrypted. Only set on messages flowing through the relay approval pathway.",
+      "type": ["object", "null"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["allow", "deny"]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": ["decision"]
     }
   },
 
   "$defs": {
     "MsgType": {
+      "description": "event: fire-and-forget notification; request: expects a matching response; response: answers a prior request",
       "type": "string",
-      "enum": ["request", "response", "event"],
-      "description": "request: expects response, response: answers request, event: fire-and-forget"
+      "enum": ["event", "request", "response"]
     },
 
     "Peer": {
+      "description": "Message origin actor",
       "type": "string",
-      "enum": ["desktop", "mobile", "server"],
-      "description": "Message origin actor"
+      "enum": ["desktop", "mobile", "server"]
     },
 
     "EventType": {
       "type": "string",
       "enum": [
-        "session.start",
-        "session.end",
-        "message.user",
-        "message.assistant",
-        "tool.request",
-        "tool.result",
-        "tool.permission_request",
-        "tool.permission_response",
+        "session_start",
+        "session_end",
+        "user_prompt_submit",
+        "user_prompt_expansion",
+        "pre_tool_use",
+        "post_tool_use",
+        "post_tool_use_failure",
+        "post_tool_batch",
+        "permission_request",
+        "permission_denied",
+        "stop",
+        "stop_failure",
         "notification",
-        "sync",
+        "message_display",
+        "subagent_start",
+        "subagent_stop",
+        "task_created",
+        "task_completed",
+        "elicitation",
+        "elicitation_result",
+        "setup",
+        "pre_compact",
+        "post_compact",
+        "teammate_idle",
+        "config_change",
+        "cwd_changed",
+        "file_changed",
+        "instructions_loaded",
+        "worktree_create",
+        "worktree_remove",
         "key.exchange",
         "set_preferences",
         "get_preferences",
         "preferences",
+        "sync",
         "auth_success",
         "error"
       ]
@@ -91,12 +130,42 @@
         "ROOM_NOT_FOUND",
         "REQUEST_TIMEOUT",
         "RATE_LIMITED",
-        "INTERNAL"
+        "INTERNAL",
+        "CONNECTION_LIMIT",
+        "ENCRYPTION_FAILED"
       ]
     },
 
+    "EnvelopeData": {
+      "description": "Unencrypted message payload. Contains the raw Hook JSON plus optional metadata fields for routing and display.",
+      "type": "object",
+      "required": ["raw", "truncated"],
+      "properties": {
+        "raw": {
+          "description": "Full Hook stdin JSON. Contains the original hook event data from Claude Code.",
+          "type": "object"
+        },
+        "tool_use_id": {
+          "description": "Unique identifier for tool call. Populated by PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest, PermissionDenied.",
+          "type": ["string", "null"]
+        },
+        "agent_id": {
+          "description": "Subagent identifier. Populated by SubagentStart, SubagentStop.",
+          "type": ["string", "null"]
+        },
+        "turn_id": {
+          "description": "Conversation turn identifier. Generated by plugin on UserPromptSubmit, cleared on Stop.",
+          "type": ["string", "null"]
+        },
+        "truncated": {
+          "description": "Whether data.raw was truncated due to size limits (max_data_size config).",
+          "type": "boolean"
+        }
+      }
+    },
+
     "EncryptedPayload": {
-      "description": "E2EE encrypted data field (AES-256-GCM via ECDH P-256 + HKDF-SHA256 with info string 'cli-notify-v1')",
+      "description": "E2EE encrypted data field (AES-256-GCM via ECDH P-256 + HKDF-SHA256 with info string 'cli-notify-v2')",
       "type": "object",
       "required": ["ephemeralKey", "iv", "ciphertext"],
       "properties": {
@@ -112,46 +181,6 @@
           "description": "Base64-encoded AES-256-GCM ciphertext (includes 16-byte auth tag appended)",
           "type": "string"
         }
-      }
-    },
-
-    "KeyExchangeRequest": {
-      "type": "object",
-      "required": ["publicKey"],
-      "properties": {
-        "publicKey": {
-          "description": "Base64-encoded ECDH P-256 public key (uncompressed point, 65 bytes)",
-          "type": "string"
-        },
-        "algorithm": {
-          "description": "Optional algorithm identifier for validation",
-          "type": "string",
-          "const": "ECDH-P256-AES256-GCM"
-        }
-      }
-    },
-
-    "KeyExchangeResponse": {
-      "type": "object",
-      "required": ["status"],
-      "properties": {
-        "status": { "type": "string", "enum": ["ok", "error"] },
-        "fingerprint": {
-          "description": "SHA-256 hex fingerprint of the registered public key",
-          "type": "string"
-        },
-        "error": { "type": "string" }
-      }
-    },
-
-    "ErrorResponse": {
-      "description": "Standard error response format — flat, not nested",
-      "type": "object",
-      "required": ["code", "message"],
-      "properties": {
-        "code": { "$ref": "#/$defs/ErrorCode" },
-        "message": { "type": "string" },
-        "detail": { "type": "object" }
       }
     }
   }

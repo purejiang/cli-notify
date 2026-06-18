@@ -1,241 +1,808 @@
 {
-  "description": "Each entry is a valid Envelope covering every EventType in protocol/schema.json. Used by schema-validation tests.",
+  "description": "Each entry is a valid Protocol v2 Envelope covering all 37 EventTypes. Used by schema-validation tests.",
   "envelopes": {
-    "session.start": {
-      "type": "session.start",
+    "session_start": {
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": {
+        "raw": { "hook_event_name": "SessionStart", "cwd": "/home/user/project", "session_id": "sess-abc123" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
     },
-    "session.end": {
-      "type": "session.end",
+    "session_end": {
+      "type": "session_end",
       "id": "550e8400-e29b-41d4-a716-446655440002",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000001000,
+      "timestamp": 1718700001000,
       "encrypted": false,
-      "data": { "reason": "user closed terminal" }
+      "data": {
+        "raw": { "hook_event_name": "SessionEnd", "session_id": "sess-abc123", "cwd": "/home/user/project", "reason": "user_closed" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "message.user": {
-      "type": "message.user",
+    "user_prompt_submit": {
+      "type": "user_prompt_submit",
       "id": "550e8400-e29b-41d4-a716-446655440003",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000002000,
+      "timestamp": 1718700002000,
       "encrypted": false,
-      "data": { "content": "请帮我重构 auth.ts" }
+      "data": {
+        "raw": { "hook_event_name": "UserPromptSubmit", "cwd": "/home/user/project", "session_id": "sess-abc123", "prompt": "请帮我重构 auth.ts" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "message.assistant": {
-      "type": "message.assistant",
+    "pre_tool_use": {
+      "type": "pre_tool_use",
       "id": "550e8400-e29b-41d4-a716-446655440004",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440004",
+      "groupId": "660e8400-e29b-41d4-a716-446655440000",
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700003000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "PreToolUse", "tool_use_id": "tool-001", "agent_id": null, "cwd": "/home/user/project", "tool_name": "Edit", "params": { "file_path": "/home/user/project/auth.ts", "old_string": "foo", "new_string": "bar" } },
+        "tool_use_id": "tool-001",
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "post_tool_use": {
+      "type": "post_tool_use",
+      "id": "550e8400-e29b-41d4-a716-446655440005",
       "msgType": "event",
       "correlationId": null,
+      "groupId": "660e8400-e29b-41d4-a716-446655440000",
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000003000,
+      "timestamp": 1718700004000,
       "encrypted": false,
       "data": {
-        "content": "好的，我已经完成重构。",
-        "model": "claude-sonnet-4-6",
-        "tokens": { "input": 150, "output": 80 },
-        "stopReason": "end_turn"
-      }
+        "raw": { "hook_event_name": "PostToolUse", "tool_use_id": "tool-001", "agent_id": null, "cwd": "/home/user/project", "success": true, "output": "{\"oldString\":\"foo\",\"newString\":\"bar\"}" },
+        "tool_use_id": "tool-001",
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "tool.request": {
-      "type": "tool.request",
-      "id": "550e8400-e29b-41d4-a716-446655440005",
-      "msgType": "request",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440005",
-      "sessionId": "sess-abc123",
-      "from": "desktop",
-      "timestamp": 1718000004000,
-      "encrypted": false,
-      "data": {
-        "toolName": "Edit",
-        "params": { "file_path": "/path/to/file.ts", "old_string": "foo", "new_string": "bar" }
-      }
-    },
-    "tool.result": {
-      "type": "tool.result",
+    "post_tool_use_failure": {
+      "type": "post_tool_use_failure",
       "id": "550e8400-e29b-41d4-a716-446655440006",
       "msgType": "event",
       "correlationId": null,
+      "groupId": "660e8400-e29b-41d4-a716-446655440000",
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000005000,
+      "timestamp": 1718700005000,
       "encrypted": false,
       "data": {
-        "toolName": "Edit",
-        "output": "{\"oldString\":\"foo\",\"newString\":\"bar\"}",
-        "success": true
-      }
+        "raw": { "hook_event_name": "PostToolUseFailure", "tool_use_id": "tool-002", "agent_id": null, "cwd": "/home/user/project", "error": "File not found", "success": false },
+        "tool_use_id": "tool-002",
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "tool.permission_request": {
-      "type": "tool.permission_request",
+    "post_tool_batch": {
+      "type": "post_tool_batch",
       "id": "550e8400-e29b-41d4-a716-446655440007",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000006000,
+      "timestamp": 1718700006000,
       "encrypted": false,
       "data": {
-        "toolName": "Bash",
-        "message": "请前往桌面端处理权限请求"
-      }
+        "raw": { "hook_event_name": "PostToolBatch", "cwd": "/home/user/project", "tool_count": 3, "success": true },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "permission_request": {
+      "type": "permission_request",
+      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440008",
+      "groupId": "660e8400-e29b-41d4-a716-446655440001",
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700007000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "PermissionRequest", "tool_use_id": "tool-003", "agent_id": null, "cwd": "/home/user/project", "tool_name": "Bash", "command": "rm -rf /tmp/test", "message": "Run this bash command?" },
+        "tool_use_id": "tool-003",
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "permission_denied": {
+      "type": "permission_denied",
+      "id": "550e8400-e29b-41d4-a716-446655440009",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": "660e8400-e29b-41d4-a716-446655440001",
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700008000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "PermissionDenied", "tool_use_id": "tool-003", "agent_id": null, "cwd": "/home/user/project", "tool_name": "Bash", "reason": "User denied" },
+        "tool_use_id": "tool-003",
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "stop": {
+      "type": "stop",
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700009000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "Stop", "cwd": "/home/user/project", "reason": "user_stop" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "stop_failure": {
+      "type": "stop_failure",
+      "id": "550e8400-e29b-41d4-a716-446655440011",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700010000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "StopFailure", "cwd": "/home/user/project", "error": "Stop failed: timeout" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
     },
     "notification": {
       "type": "notification",
-      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "id": "550e8400-e29b-41d4-a716-446655440012",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000007000,
+      "timestamp": 1718700011000,
       "encrypted": false,
       "data": {
-        "kind": "idle_prompt",
-        "message": null,
-        "cwd": "/home/user/project"
-      }
+        "raw": { "hook_event_name": "Notification", "cwd": "/home/user/project", "kind": "idle_prompt", "message": null },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "sync": {
-      "type": "sync",
-      "id": "550e8400-e29b-41d4-a716-446655440009",
-      "msgType": "request",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440009",
-      "sessionId": "",
-      "from": "mobile",
-      "timestamp": 1718000008000,
-      "encrypted": false,
-      "data": {}
-    },
-    "key.exchange": {
-      "type": "key.exchange",
-      "id": "550e8400-e29b-41d4-a716-446655440010",
-      "msgType": "request",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440010",
-      "sessionId": "",
-      "from": "mobile",
-      "timestamp": 1718000009000,
-      "encrypted": false,
-      "data": {
-        "publicKey": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-        "algorithm": "ECDH-P256-AES256-GCM"
-      }
-    },
-    "set_preferences": {
-      "type": "set_preferences",
-      "id": "550e8400-e29b-41d4-a716-446655440011",
-      "msgType": "request",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440011",
-      "sessionId": "",
-      "from": "mobile",
-      "timestamp": 1718000010000,
-      "encrypted": false,
-      "data": {
-        "approvalTimeoutMs": 8000,
-        "fallbackAction": "ask"
-      }
-    },
-    "get_preferences": {
-      "type": "get_preferences",
-      "id": "550e8400-e29b-41d4-a716-446655440012",
-      "msgType": "request",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440012",
-      "sessionId": "",
-      "from": "mobile",
-      "timestamp": 1718000011000,
-      "encrypted": false,
-      "data": {}
-    },
-    "preferences": {
-      "type": "preferences",
+    "message_display": {
+      "type": "message_display",
       "id": "550e8400-e29b-41d4-a716-446655440013",
       "msgType": "event",
       "correlationId": null,
-      "sessionId": "",
-      "from": "server",
-      "timestamp": 1718000012000,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700012000,
       "encrypted": false,
       "data": {
-        "approvalTimeoutMs": 8000,
-        "fallbackAction": "ask",
-        "hasDesktop": true
-      }
+        "raw": { "hook_event_name": "MessageDisplay", "message_id": "msg-001", "cwd": "/home/user/project", "delta": "Hello", "role": "assistant" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "auth_success": {
-      "type": "auth_success",
+    "subagent_start": {
+      "type": "subagent_start",
       "id": "550e8400-e29b-41d4-a716-446655440014",
       "msgType": "event",
       "correlationId": null,
-      "sessionId": "",
-      "from": "server",
-      "timestamp": 1718000013000,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700013000,
       "encrypted": false,
-      "data": { "user_id": "paired-user" }
+      "data": {
+        "raw": { "hook_event_name": "SubagentStart", "agent_id": "agent-001", "cwd": "/home/user/project", "task": "Analyze the codebase" },
+        "tool_use_id": null,
+        "agent_id": "agent-001",
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "error": {
-      "type": "error",
+    "subagent_stop": {
+      "type": "subagent_stop",
       "id": "550e8400-e29b-41d4-a716-446655440015",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
-      "from": "server",
-      "timestamp": 1718000014000,
+      "from": "desktop",
+      "timestamp": 1718700014000,
       "encrypted": false,
       "data": {
-        "code": "AUTH_FAILED",
-        "message": "Invalid or expired token",
-        "detail": {}
-      }
+        "raw": { "hook_event_name": "SubagentStop", "agent_id": "agent-001", "cwd": "/home/user/project", "summary": "Analysis complete" },
+        "tool_use_id": null,
+        "agent_id": "agent-001",
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
     },
-    "encrypted_envelope": {
-      "type": "message.user",
+    "task_created": {
+      "type": "task_created",
       "id": "550e8400-e29b-41d4-a716-446655440016",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000015000,
+      "timestamp": 1718700015000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "TaskCreated", "task_id": "task-001", "cwd": "/home/user/project", "description": "Refactor auth module" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "task_completed": {
+      "type": "task_completed",
+      "id": "550e8400-e29b-41d4-a716-446655440017",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700016000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "TaskCompleted", "task_id": "task-001", "cwd": "/home/user/project", "result": "completed" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "elicitation": {
+      "type": "elicitation",
+      "id": "550e8400-e29b-41d4-a716-446655440018",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440018",
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700017000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "Elicitation", "cwd": "/home/user/project", "question": "What is your username?", "fields": [{"name": "username", "type": "string"}] },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "elicitation_result": {
+      "type": "elicitation_result",
+      "id": "550e8400-e29b-41d4-a716-446655440019",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700018000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "ElicitationResult", "cwd": "/home/user/project", "result": { "username": "alice" } },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "setup": {
+      "type": "setup",
+      "id": "550e8400-e29b-41d4-a716-446655440020",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700019000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "Setup", "cwd": "/home/user/project", "state": "initialized" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "pre_compact": {
+      "type": "pre_compact",
+      "id": "550e8400-e29b-41d4-a716-446655440021",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700020000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "PreCompact", "cwd": "/home/user/project", "reason": "context_full" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "post_compact": {
+      "type": "post_compact",
+      "id": "550e8400-e29b-41d4-a716-446655440022",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700021000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "PostCompact", "cwd": "/home/user/project", "tokens_saved": 15000 },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "teammate_idle": {
+      "type": "teammate_idle",
+      "id": "550e8400-e29b-41d4-a716-446655440023",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700022000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "TeammateIdle", "cwd": "/home/user/project", "teammate": "researcher", "idle_seconds": 30 },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "config_change": {
+      "type": "config_change",
+      "id": "550e8400-e29b-41d4-a716-446655440024",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700023000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "ConfigChange", "cwd": "/home/user/project", "changes": { "theme": "dark" } },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "cwd_changed": {
+      "type": "cwd_changed",
+      "id": "550e8400-e29b-41d4-a716-446655440025",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700024000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "CwdChanged", "cwd": "/home/user/project/src", "prev_cwd": "/home/user/project" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "file_changed": {
+      "type": "file_changed",
+      "id": "550e8400-e29b-41d4-a716-446655440026",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700025000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "FileChanged", "cwd": "/home/user/project", "file": "auth.ts", "change": "modified" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "instructions_loaded": {
+      "type": "instructions_loaded",
+      "id": "550e8400-e29b-41d4-a716-446655440027",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700026000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "InstructionsLoaded", "cwd": "/home/user/project", "source": "CLAUDE.md" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "worktree_create": {
+      "type": "worktree_create",
+      "id": "550e8400-e29b-41d4-a716-446655440028",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700027000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "WorktreeCreate", "cwd": "/home/user/project", "name": "feature-branch" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "worktree_remove": {
+      "type": "worktree_remove",
+      "id": "550e8400-e29b-41d4-a716-446655440029",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700028000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "WorktreeRemove", "cwd": "/home/user/project", "name": "feature-branch" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "user_prompt_expansion": {
+      "type": "user_prompt_expansion",
+      "id": "550e8400-e29b-41d4-a716-446655440030",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700029000,
+      "encrypted": false,
+      "data": {
+        "raw": { "hook_event_name": "UserPromptExpansion", "cwd": "/home/user/project", "original": "帮我重构", "expanded": "请帮我重构 auth.ts 文件" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": "turn-uuid-001",
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "key.exchange": {
+      "type": "key.exchange",
+      "id": "550e8400-e29b-41d4-a716-446655440031",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718700030000,
+      "encrypted": false,
+      "data": {
+        "raw": {
+          "publicKey": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+          "algorithm": "ECDH-P256-AES256-GCM"
+        },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "set_preferences": {
+      "type": "set_preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440032",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440032",
+      "groupId": null,
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718700031000,
+      "encrypted": false,
+      "data": {
+        "raw": {
+          "approval_timeout_ms": 60000,
+          "fallback_action": "allow"
+        },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "sync": {
+      "type": "sync",
+      "id": "550e8400-e29b-41d4-a716-446655440033",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440033",
+      "groupId": null,
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718700032000,
+      "encrypted": false,
+      "data": {
+        "raw": {
+          "query": "sessions",
+          "params": {}
+        },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "encrypted_envelope": {
+      "type": "user_prompt_submit",
+      "id": "550e8400-e29b-41d4-a716-446655440034",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700033000,
       "encrypted": true,
       "data": {
         "ephemeralKey": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
         "iv": "AAAAAAAAAAAAAAAA",
         "ciphertext": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-      }
+      },
+      "_decision": null
     },
-    "response_envelope": {
-      "type": "sync",
-      "id": "550e8400-e29b-41d4-a716-446655440017",
+    "pre_tool_use_response": {
+      "type": "pre_tool_use",
+      "id": "550e8400-e29b-41d4-a716-446655440035",
       "msgType": "response",
-      "correlationId": "550e8400-e29b-41d4-a716-446655440009",
-      "sessionId": "",
-      "from": "server",
-      "timestamp": 1718000016000,
+      "correlationId": "550e8400-e29b-41d4-a716-446655440004",
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "mobile",
+      "timestamp": 1718700034000,
       "encrypted": false,
       "data": {
-        "sessions": [
-          {
-            "id": "sess-abc123",
-            "cwd": "/home/user/project",
-            "status": "active",
-            "startedAt": 1718000000000,
-            "endedAt": null,
-            "messageCount": 0,
-            "pendingApprovalCount": 0
-          }
-        ]
+        "raw": {},
+        "tool_use_id": "tool-001",
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false,
+        "decision": "allow",
+        "reason": "Looks safe"
+      },
+      "_decision": null
+    },
+    "permission_request_response": {
+      "type": "permission_request",
+      "id": "550e8400-e29b-41d4-a716-446655440036",
+      "msgType": "response",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440008",
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "mobile",
+      "timestamp": 1718700035000,
+      "encrypted": false,
+      "data": {
+        "raw": {},
+        "tool_use_id": "tool-003",
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false,
+        "decision": "allow",
+        "reason": "Approved by user"
+      },
+      "_decision": {
+        "decision": "allow",
+        "reason": "Approved by user"
       }
+    },
+    "elicitation_response": {
+      "type": "elicitation",
+      "id": "550e8400-e29b-41d4-a716-446655440037",
+      "msgType": "response",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440018",
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "mobile",
+      "timestamp": 1718700036000,
+      "encrypted": false,
+      "data": {
+        "raw": {},
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false,
+        "action": "accept",
+        "content": { "username": "alice" }
+      },
+      "_decision": null
+    },
+    "error": {
+      "type": "error",
+      "id": "550e8400-e29b-41d4-a716-446655440038",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "server",
+      "timestamp": 1718700037000,
+      "encrypted": false,
+      "data": {
+        "raw": {
+          "code": "REQUEST_TIMEOUT",
+          "message": "Approval request timed out",
+          "detail": {}
+        },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "auth_success": {
+      "type": "auth_success",
+      "id": "550e8400-e29b-41d4-a716-446655440039",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "",
+      "from": "server",
+      "timestamp": 1718700038000,
+      "encrypted": false,
+      "data": {
+        "raw": { "user_id": "paired-user" },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "get_preferences": {
+      "type": "get_preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440040",
+      "msgType": "request",
+      "correlationId": "550e8400-e29b-41d4-a716-446655440040",
+      "groupId": null,
+      "sessionId": "",
+      "from": "mobile",
+      "timestamp": 1718700039000,
+      "encrypted": false,
+      "data": {
+        "raw": {},
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
+    },
+    "preferences": {
+      "type": "preferences",
+      "id": "550e8400-e29b-41d4-a716-446655440041",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "",
+      "from": "server",
+      "timestamp": 1718700040000,
+      "encrypted": false,
+      "data": {
+        "raw": {
+          "approval_timeout_ms": 60000,
+          "fallback_action": "ask",
+          "hasDesktop": true
+        },
+        "tool_use_id": null,
+        "agent_id": null,
+        "turn_id": null,
+        "truncated": false
+      },
+      "_decision": null
     }
   }
 }

@@ -1,111 +1,192 @@
 {
-  "description": "Invalid Envelope examples for negative-testing the JSON Schema validator.",
+  "description": "Invalid Envelope examples for negative-testing the Protocol v2 JSON Schema validator.",
   "envelopes": {
     "missing_type": {
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
     },
     "missing_id": {
-      "type": "session.start",
+      "type": "session_start",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_msgType": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700000000,
+      "encrypted": false,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_sessionId": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "from": "desktop",
+      "timestamp": 1718700000000,
+      "encrypted": false,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_from": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "timestamp": 1718700000000,
+      "encrypted": false,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_timestamp": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "encrypted": false,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_encrypted": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700000000,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "missing_data": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700000000,
+      "encrypted": false,
+      "_decision": null
     },
     "wrong_type_enum": {
       "type": "invalid.event.type",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
     },
     "wrong_msgType": {
-      "type": "session.start",
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "unknown_msg_type",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
     },
     "wrong_from_enum": {
-      "type": "session.start",
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "browser",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
-    },
-    "missing_sessionId": {
-      "type": "session.start",
-      "id": "550e8400-e29b-41d4-a716-446655440001",
-      "msgType": "event",
-      "correlationId": null,
-      "from": "desktop",
-      "timestamp": 1718000000000,
-      "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
-    },
-    "missing_timestamp": {
-      "type": "session.start",
-      "id": "550e8400-e29b-41d4-a716-446655440001",
-      "msgType": "event",
-      "correlationId": null,
-      "sessionId": "sess-abc123",
-      "from": "desktop",
-      "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
     },
     "data_not_object": {
-      "type": "session.start",
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": false,
-      "data": "not_an_object_this_is_a_string"
+      "data": "not_an_object_this_is_a_string",
+      "_decision": null
     },
     "negative_timestamp": {
-      "type": "session.start",
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
       "timestamp": -1,
       "encrypted": false,
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
     },
     "encrypted_not_boolean": {
-      "type": "session.start",
+      "type": "session_start",
       "id": "550e8400-e29b-41d4-a716-446655440001",
       "msgType": "event",
       "correlationId": null,
+      "groupId": null,
       "sessionId": "sess-abc123",
       "from": "desktop",
-      "timestamp": 1718000000000,
+      "timestamp": 1718700000000,
       "encrypted": "yes",
-      "data": { "cwd": "/home/user/project" }
+      "data": { "raw": {}, "truncated": false },
+      "_decision": null
+    },
+    "decision_not_object": {
+      "type": "session_start",
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "msgType": "event",
+      "correlationId": null,
+      "groupId": null,
+      "sessionId": "sess-abc123",
+      "from": "desktop",
+      "timestamp": 1718700000000,
+      "encrypted": false,
+      "data": { "raw": {}, "truncated": false },
+      "_decision": "not_an_object"
     }
   }
 }
