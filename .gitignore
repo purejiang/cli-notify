@@ -3,3 +3,23 @@
 
 # superpowers brainstorming mockups
 .superpowers/
+
+# Claude Code
+.claude/
+
+# Codegraph
+.codegraph/
+
+# Tool test artifacts
+.tool-test/
+prompt.md
+
+# Node
+node_modules/
+tests/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+tests/plugin/__pycache__/
